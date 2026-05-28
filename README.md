@@ -1,4 +1,4 @@
-# Sbs Extension (Modified by Astrxl)
+# Astrxl extension
 
 Une extension puissante pour les navigateurs basés sur Chromium conçue pour optimiser, personnaliser et enrichir l'expérience des joueurs sur les plateformes de jeu Web supportées (notamment `ss.randomkzn.com` et `yell0wsuit.page`). Ce projet regroupe une suite complète d'outils de gaming (Gaming Tools Suite) combinant personnalisation d'interface, suivi de performances, contrôle audio global et protection avancée.
 
@@ -7,7 +7,7 @@ Une extension puissante pour les navigateurs basés sur Chromium conçue pour op
 ## 🚀 Fonctionnalités Principales
 
 ### 🎮 Outils de Jeu & Interface
-* **Timer d'Entraînement / Run (Style LiveSplit) :** Un chronomètre hautement personnalisable avec un système de classement par paliers de temps (ex: *Interstellar*, *Suprême*, *Grand Champion*, *Champion*...).
+* **Timer d'Entraînement / Run (Style LiveSplit) :** Un chronomètre hautement personnalisable
 * **Compteur de FPS & Keypress :** Affichage en temps réel du taux de rafraîchissement et des touches pressées à l'écran, avec configurations de disposition (layout flèches/ZQSD) et de thèmes visuels.
 * **Remap Clavier (ZQSD Active) :** Permet d'ajuster ou de réassigner les touches pour un confort de jeu optimal.
 * **Changement de Résolution Virtuelle :** Prise en charge de résolutions personnalisées (ex: `608x1080`) avec option d'activation de bandes noires (Black Bars) pour simuler des affichages spécifiques ou étirés (Stretched resolution).
@@ -52,8 +52,8 @@ Puisque cette extension est distribuée de manière exclusive et personnalisée,
 
 3. Activez le **Mode Développeur** (généralement un interrupteur en haut à droite de la page).
 4. Cliquez sur le bouton **Charger l'extension non empaquetée** (Load unpacked).
-5. Sélectionnez à deux reprises sur le dossier `Sbs extension modified by Astrxl`.
-6. L'extension *Sbs extension modified by Astrxl* est désormais active ! Épinglez-la à votre barre d'outils pour y accéder facilement.
+5. Sélectionnez le dossier `Astrxl-extension-v1` jusqu'à que plus rien n'apparaisse.
+6. L'extension *Astrxl-extension-v1* est désormais active ! Épinglez-la à votre barre d'outils pour y accéder facilement.
 
 ---
 
