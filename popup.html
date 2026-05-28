@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V1 modified by Astrxl</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body:       #0d0d0d;
+            --bg-sidebar:    #111111;
+            --bg-card:       #181818;
+            --bg-input:      #202020;
+            --bg-hover:      #282828;
+
+            --accent:        #ff6b00;
+            --accent2:       #ffd000;
+            --accent-glow:   rgba(255, 107, 0, 0.25);
+            --accent-hover:  #ff8c00;
+
+            --text-main:     #fff8ee;
+            --text-muted:    #9a9a9a;
+
+            --border:        #2a2a2a;
+            --border-hi:     #ff6b0055;
+
+            --success:       #39d353;
+            --danger:        #ef4444;
+            --radius:        10px;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; outline:none; }
+
+        body {
+            width:700px; height:540px;
+            background:var(--bg-body);
+            color:var(--text-main);
+            font-family:'Inter',sans-serif;
+            display:flex; overflow:hidden;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width:188px;
+            background: linear-gradient(180deg, #0d0d0d 0%, #111111 100%);
+            border-right:1px solid var(--border);
+            display:flex; flex-direction:column;
+            padding:20px 0; flex-shrink:0;
+            position:relative;
+        }
+        .sidebar::after {
+            content:''; position:absolute; top:0; right:0; bottom:0; width:1px;
+            background:linear-gradient(180deg, transparent, var(--accent-glow) 40%, var(--accent-glow) 60%, transparent);
+            pointer-events:none;
+        }
+
+        .brand {
+            padding:0 20px 22px 20px;
+            font-size:15px; font-weight:800;
+            color:var(--text-main);
+            letter-spacing:-0.5px;
+            display:flex; align-items:center; gap:10px;
+            border-bottom:1px solid var(--border);
+            margin-bottom:12px;
+        }
+        .brand-icon {
+            width:30px; height:30px; border-radius:8px;
+            background:linear-gradient(135deg, var(--accent), var(--accent2));
+            display:flex; align-items:center; justify-content:center;
+            font-size:14px; color:#fff; flex-shrink:0;
+            box-shadow:0 0 12px var(--accent-glow);
+        }
+        .brand-text { line-height:1.2; }
+        .brand-text small { display:block; font-size:10px; font-weight:500; color:var(--text-muted); letter-spacing:0; }
+
+        .nav-section { padding:0 12px; margin-bottom:4px; }
+        .nav-label { font-size:9px; font-weight:700; color:var(--text-muted); letter-spacing:1.2px; text-transform:uppercase; padding:0 8px 6px; }
+
+        .nav-item {
+            padding:10px 12px; cursor:pointer;
+            color:var(--text-muted); font-size:12.5px; font-weight:600;
+            transition:all 0.18s ease;
+            display:flex; align-items:center; gap:10px;
+            border-radius:8px; margin-bottom:2px;
+            border:1px solid transparent;
+        }
+        .nav-item i { font-size:14px; width:16px; text-align:center; }
+        .nav-item:hover { color:var(--text-main); background:var(--bg-hover); }
+        .nav-item.active {
+            color:var(--text-main);
+            background:linear-gradient(90deg, rgba(255,107,0,0.15), rgba(255,208,0,0.08));
+            border-color:var(--border-hi);
+        }
+        .nav-item.active i { color:var(--accent); }
+
+        .sidebar-footer {
+            margin-top:auto; padding:14px 12px;
+            border-top:1px solid var(--border);
+        }
+
+        /* MAIN */
+        .main {
+            flex:1; padding:24px 28px; overflow-y:auto;
+            background:radial-gradient(ellipse at 80% 0%, rgba(255,107,0,0.06) 0%, transparent 55%),
+                        radial-gradient(ellipse at 20% 100%, rgba(255,208,0,0.05) 0%, transparent 50%);
+        }
+        .main::-webkit-scrollbar { width:5px; }
+        .main::-webkit-scrollbar-track { background:transparent; }
+        .main::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+        .view-section { display:none; animation:fadeIn 0.25s cubic-bezier(0.16,1,0.3,1); }
+        .view-section.active { display:block; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+        .section-header { margin-bottom:18px; display:flex; align-items:flex-end; justify-content:space-between; }
+        .section-title { font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+        .section-subtitle { font-size:12px; color:var(--text-muted); margin-top:3px; }
+        .section-badge {
+            font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px;
+            background:rgba(255,107,0,0.15); color:var(--accent); border:1px solid rgba(255,107,0,0.3);
+            letter-spacing:0.5px; text-transform:uppercase;
+        }
+
+        /* CARDS */
+        .card {
+            background:var(--bg-card);
+            border:1px solid var(--border);
+            border-radius:12px; padding:16px;
+            margin-bottom:14px;
+            transition:border-color 0.2s;
+            position:relative; overflow:hidden;
+        }
+        .card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:1px;
+            background:linear-gradient(90deg, transparent, var(--border-hi), transparent);
+        }
+        .card:hover { border-color:var(--border-hi); }
+
+        .card-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:14px;
+        }
+        .card-title {
+            font-size:11px; font-weight:700; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:0.9px;
+            display:flex; align-items:center; gap:6px;
+        }
+        .card-title i { color:var(--accent); font-size:12px; }
+
+        /* CONTROL ROWS */
+        .control-row {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+        }
+        .control-row:last-child { border-bottom:none; padding-bottom:0; }
+        .control-label { font-size:13.5px; font-weight:500; }
+        .control-desc { font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+
+        /* SWITCH */
+        .switch { position:relative; display:inline-block; width:40px; height:21px; flex-shrink:0; }
+        .switch input { opacity:0; width:0; height:0; }
+        .slider {
+            position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+            background:var(--bg-input); transition:.25s; border-radius:34px;
+            border:1px solid var(--border);
+        }
+        .slider:before {
+            position:absolute; content:""; height:15px; width:15px; left:2px; bottom:2px;
+            background:var(--text-muted); transition:.25s; border-radius:50%;
+        }
+        input:checked + .slider { background:linear-gradient(135deg,var(--accent),var(--accent2)); border-color:var(--accent); box-shadow:0 0 8px var(--accent-glow); }
+        input:checked + .slider:before { transform:translateX(19px); background:#fff; }
+
+        /* BUTTONS */
+        .btn {
+            padding:9px 14px; border-radius:8px; border:1px solid var(--border);
+            background:var(--bg-input); color:var(--text-main);
+            font-size:12.5px; font-weight:600; cursor:pointer;
+            transition:all 0.18s; text-align:center; width:100%;
+            display:inline-flex; align-items:center; justify-content:center; gap:7px;
+            font-family:'Inter',sans-serif;
+        }
+        .btn:hover { background:var(--bg-hover); border-color:var(--border-hi); transform:translateY(-1px); }
+        .btn:active { transform:translateY(0); }
+
+        .btn-primary {
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            border-color:transparent; color:#fff;
+            box-shadow:0 4px 14px var(--accent-glow);
+        }
+        .btn-primary:hover { filter:brightness(1.1); border-color:transparent; }
+
+        .btn-danger { background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.25); color:var(--danger); }
+        .btn-danger:hover { background:rgba(239,68,68,0.18); border-color:var(--danger); }
+
+        .btn-mini { padding:7px 11px; font-size:11.5px; }
+        .btn-ghost { background:transparent; border-color:transparent; }
+        .btn-ghost:hover { background:var(--bg-hover); border-color:var(--border); }
+
+        /* INPUTS */
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--bg-input) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 2px !important;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+            background: transparent;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        input[type="text"], input[type="number"], select {
+            background:var(--bg-input); border:1px solid var(--border);
+            color:var(--text-main); padding:9px 11px; border-radius:8px;
+            width:100%; font-size:12.5px; font-family:'Inter',sans-serif; transition:all 0.2s;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color:var(--accent); background:var(--bg-card);
+            box-shadow:0 0 0 3px var(--accent-glow);
+        }
+        select option { background:var(--bg-card); }
+
+        /* GRIDS */
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+
+        /* HOTKEY BAR */
+        .hotkey-container {
+            background:var(--bg-body); padding:3px; border-radius:8px;
+            border:1px solid var(--border); display:flex; gap:3px;
+        }
+        .key-btn {
+            flex:1; border:none; background:transparent; color:var(--text-muted);
+            padding:7px 6px; border-radius:6px; cursor:pointer; font-weight:700; font-size:10.5px;
+            text-transform:uppercase; transition:all 0.18s; font-family:'Inter',sans-serif;
+        }
+        .key-btn:hover { color:var(--text-main); background:var(--bg-hover); }
+        .key-btn.active {
+            background:linear-gradient(135deg,rgba(255,107,0,0.2),rgba(255,208,0,0.15));
+            color:var(--accent); border:1px solid rgba(255,107,0,0.3);
+        }
+
+        /* SCROLL LIST */
+        .scroll-list {
+            max-height:190px; overflow-y:auto; padding-right:4px;
+            display:grid; grid-template-columns:1fr 1fr; gap:7px;
+        }
+        .scroll-list::-webkit-scrollbar { width:4px; }
+        .scroll-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+        /* CITY BUTTONS */
+        .city-link {
+            border:1px solid var(--border-hi) !important;
+            color:var(--accent) !important;
+            background:rgba(255,107,0,0.06) !important;
+            font-size:11px !important;
+        }
+        .city-link:hover {
+            background:rgba(255,107,0,0.18) !important;
+            border-color:var(--accent) !important;
+            color:#fff !important;
+        }
+
+        /* TOAST */
+        .status-toast {
+            position:fixed; bottom:20px; right:20px;
+            background:var(--bg-card); color:var(--text-main);
+            padding:11px 16px; border-radius:10px;
+            font-size:12.5px; font-weight:500;
+            border:1px solid var(--border-hi);
+            border-left:3px solid var(--accent);
+            box-shadow:0 8px 24px rgba(0,0,0,0.5);
+            transform:translateY(80px); transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            z-index:999; display:flex; align-items:center; gap:10px;
+        }
+        .status-toast.show { transform:translateY(0); }
+
+        /* STYLE SLIDERS */
+        .style-slider { width:100%; margin:6px 0; accent-color:var(--accent); }
+        .style-label { font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:10px; }
+
+        /* UPLOAD ROW */
+        .upload-row { display:flex; gap:7px; align-items:center; margin-bottom:8px; }
+        .upload-btn { flex:1; font-size:11px; padding:6px; }
+        .preview-box { width:26px; height:26px; border-radius:5px; border:1px solid var(--border); background-size:cover; background-position:center; flex-shrink:0; }
+
+        /* RANGE custom */
+        input[type="range"] {
+            -webkit-appearance:none;
+            appearance:none;
+            height:3px; border-radius:2px;
+            background:var(--border); outline:none; border:none; padding:0; width:100%;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance:none; appearance:none; width:14px; height:14px; border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent2));
+            cursor:pointer; box-shadow:0 0 6px var(--accent-glow);
+        }
+
+        /* LANGUAGE MODAL */
+        .language-modal { position:fixed; inset:0; z-index:2000; display:flex; align-items:center; justify-content:center; }
+        .language-modal.hidden { display:none; }
+        .language-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); }
+        .language-card {
+            position:relative; width:420px; max-width:90vw;
+            background:var(--bg-card); border:1px solid var(--border-hi);
+            border-radius:16px; padding:24px;
+            box-shadow:0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,107,0,0.1);
+        }
+        .language-title { font-size:18px; font-weight:800; margin-bottom:4px; }
+        .language-subtitle { font-size:12.5px; color:var(--text-muted); margin-bottom:16px; }
+        .language-options { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+        .language-option {
+            border:1px solid var(--border); background:var(--bg-input);
+            color:var(--text-main); border-radius:10px; padding:12px;
+            cursor:pointer; text-align:left; transition:all 0.18s;
+            display:flex; align-items:center; gap:10px; font-family:'Inter',sans-serif;
+        }
+        .language-option:hover { border-color:var(--border-hi); background:var(--bg-hover); }
+        .language-option.active { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-glow); }
+        .language-badge { font-size:11px; color:var(--text-muted); }
+        .language-actions { display:flex; justify-content:flex-end; gap:8px; }
+
+        /* DIVIDER */
+        .divider { height:1px; background:var(--border); margin:14px 0; }
+
+        /* INFO PILL */
+        .tip-box {
+            background:rgba(255,107,0,0.07); border:1px solid rgba(255,107,0,0.2);
+            border-radius:8px; padding:10px 12px;
+            font-size:12px; color:var(--text-muted); line-height:1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="languageModal" class="language-modal hidden">
+        <div class="language-backdrop"></div>
+        <div class="language-card">
+            <div class="language-title" data-i18n-key="language.title">Choisissez votre langue</div>
+            <div class="language-subtitle" data-i18n-key="language.subtitle">Nous l'utiliserons pour l'interface du popup.</div>
+            <div class="language-options">
+                <button class="language-option" data-lang="fr"><span>🇫🇷</span><div><div data-i18n-key="language.fr">Français</div><div class="language-badge" data-i18n-key="language.frLabel">Par défaut</div></div></button>
+                <button class="language-option" data-lang="en"><span>🇺🇸</span><div><div data-i18n-key="language.en">English</div><div class="language-badge" data-i18n-key="language.enLabel">International</div></div></button>
+                <button class="language-option" data-lang="pt-BR"><span>🇧🇷</span><div><div data-i18n-key="language.pt">Português (Brasil)</div><div class="language-badge" data-i18n-key="language.ptLabel">Comunidade BR</div></div></button>
+                <button class="language-option" data-lang="zh"><span>🇨🇳</span><div><div data-i18n-key="language.zh">中文</div><div class="language-badge" data-i18n-key="language.zhLabel">简体中文</div></div></button>
+            </div>
+            <div class="language-actions">
+                <button class="btn" id="languageLater" data-i18n-key="language.later">Plus tard</button>
+                <button class="btn btn-primary" id="confirmLanguage" data-i18n-key="language.confirm">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-ghost"></i></div>
+            <div class="brand-text">Astrxl Mod<small>V1 — Subway Surfers</small></div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Menu</div>
+            <div class="nav-item active" data-target="dashboard"><i class="fa-solid fa-gauge-high"></i><span data-i18n-key="nav.dashboard">Dashboard</span></div>
+            <div class="nav-item" data-target="gametools"><i class="fa-solid fa-gamepad"></i><span data-i18n-key="nav.gametools">Game Tools</span></div>
+            <div class="nav-item" data-target="appearance"><i class="fa-solid fa-paintbrush"></i><span>Style & BG</span></div>
+            <div class="nav-item" data-target="advanced"><i class="fa-solid fa-sliders"></i><span>Customisation</span></div>
+            <div class="nav-item" data-target="media"><i class="fa-solid fa-music"></i><span data-i18n-key="nav.media">Media</span></div>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="https://discord.gg/nocoin" target="_blank" class="btn btn-primary" style="text-decoration:none; margin-bottom:8px;">
+                <i class="fa-brands fa-discord"></i> Discord Nocoin
+            </a>
+            <button class="btn btn-mini" id="openLanguagePicker" style="width:100%;" data-i18n-key="language.switch">
+                <i class="fa-solid fa-globe" style="font-size:11px;"></i> Langue
+            </button>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="view-section active">
+            <div class="section-header">
+                <div><div class="section-title" data-i18n-key="section.dashboard.title">Dashboard</div><div class="section-subtitle" data-i18n-key="section.dashboard.subtitle">Overlays & contrôles en direct</div></div>
+                <div class="section-badge">Live</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-layer-group"></i> <span data-i18n-key="card.liveOverlays">Live Overlays</span></span></div>
+
+                <div class="control-row">
+                    <div><div class="control-label" data-i18n-key="label.speedrun">Speedrun Timer</div><div class="control-desc" data-i18n-key="desc.speedrun">Chrono précis au millième</div></div>
+                    <label class="switch"><input type="checkbox" id="toggleTimerSwitch"><span class="slider"></span></label>
+                </div>
+
+                <div style="margin:10px 0 16px;">
+                    <div class="control-desc" style="margin-bottom:7px;" data-i18n-key="desc.timerHotkey">Touche d'activation :</div>
+                    <div class="hotkey-container">
+                        <button class="key-btn hotkey-btn active" data-key="Control">CTRL</button>
+                        <button class="key-btn hotkey-btn" data-key="Shift">SHIFT</button>
+                        <button class="key-btn hotkey-btn" data-key="Alt">ALT</button>
+                        <button class="key-btn hotkey-btn" data-key="Space">SPACE</button>
+                    </div>
+                    <input type="text" id="customKeyInput" placeholder="Ou tapez une touche personnalisée..." data-i18n-placeholder="placeholder.customKey" style="margin-top:8px;">
+                </div>
+
+                <div class="control-row">
+                    <div><div class="control-label" data-i18n-key="label.fps">FPS Counter</div><div class="control-desc" data-i18n-key="desc.fps">Affiche les images/seconde</div></div>
+                    <label class="switch"><input type="checkbox" id="toggleFpsSwitch"><span class="slider"></span></label>
+                </div>
+                <div class="control-row">
+                    <div><div class="control-label" data-i18n-key="label.keypress">Affichage Touches</div><div class="control-desc" data-i18n-key="desc.keypress">Visualisez vos inputs en direct</div></div>
+                    <label class="switch"><input type="checkbox" id="toggleKeypressSwitch"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-circle-dot"></i> Enregistrement</span></div>
+                <button class="btn btn-primary" id="recordingActionBtn"><i class="fa-solid fa-video"></i> <span>Chargement...</span></button>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-expand"></i> <span data-i18n-key="card.resolution">Résolution</span></span></div>
+                <div class="grid-2">
+                    <select id="resolutionSelect">
+                        <option value="608x1080">608×1080 (Vertical)</option>
+                        <option value="890x1080">890×1080 (Large)</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <button class="btn btn-primary" id="activateResolution">Forcer</button>
+                </div>
+                <div id="customResInputs" style="display:none; margin-top:10px;">
+                    <div class="grid-2" style="gap:8px;">
+                        <input type="number" id="customWidth" placeholder="Largeur (px)" min="320" max="3840">
+                        <input type="number" id="customHeight" placeholder="Hauteur (px)" min="240" max="2160">
+                    </div>
+                </div>
+                <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="blackBarsToggle" checked style="width:auto; accent-color:var(--accent);">
+                        <span style="font-size:12.5px; color:var(--text-muted);">Bandes noires</span>
+                    </div>
+                    <input type="color" id="barsColorPicker" value="#000000" style="width:44px; height:28px; cursor:pointer; border:1px solid var(--border); border-radius:6px; background:none; padding:2px;">
+                    <button class="btn btn-mini btn-ghost" id="deactivateResolution" style="width:auto;">Réinitialiser</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME TOOLS -->
+        <div id="gametools" class="view-section">
+            <div class="section-header">
+                <div><div class="section-title" data-i18n-key="section.gametools.title">Outils Jeu</div><div class="section-subtitle" data-i18n-key="section.gametools.subtitle">Sauvegardes, cartes & contrôles</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n-key="card.backup">Gestionnaire de Sauvegarde</span></span></div>
+                <div class="grid-2">
+                    <button class="btn" id="backup"><i class="fa-solid fa-download"></i> <span data-i18n-key="btn.backup">Backup</span></button>
+                    <button class="btn" id="restore"><i class="fa-solid fa-upload"></i> <span data-i18n-key="btn.restore">Restore</span></button>
+                    <button class="btn btn-primary" id="save100"><i class="fa-solid fa-unlock"></i> <span data-i18n-key="btn.unlock">Unlock All</span></button>
+                    <button class="btn btn-danger" id="cleanData"><i class="fa-solid fa-trash"></i> <span data-i18n-key="btn.resetData">Reset Data</span></button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-map-location-dot"></i> <span data-i18n-key="card.mapSelector">Sélecteur de Cartes</span></span></div>
+                <div class="scroll-list">
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/zurich.html">🏔️ Zurich</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/berlin.html">🦅 Berlin</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/beijing.html">🏯 Beijing</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/houston.html">🤠 Houston</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/monaco.html">🏎️ Monaco</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/barcelona.html">🌯 Barcelona</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/buenos-aires.html">🇦🇷 Buenos Aires</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/havana.html">🇨🇺 Havana</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/iceland.html">🌋 Iceland</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/london.html">🕐 London</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/mexico.html">🌵 Mexico</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/miami.html">🌴 Miami</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/new-orleans.html">🎷 New Orleans</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/index.html">🌉 San Francisco</button>
+                    <button class="btn btn-mini city-link" data-url="https://yell0wsuit.page/assets/games/subway-surfers-unity/winterholidays.html">❄️ Winter Holidays</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-keyboard"></i> <span data-i18n-key="card.keymap">Mapping Clavier (ZQSD)</span></span></div>
+                <div class="grid-4">
+                    <input type="text" id="upKey" placeholder="Haut (Z)" data-i18n-placeholder="placeholder.up">
+                    <input type="text" id="leftKey" placeholder="Gauche (Q)" data-i18n-placeholder="placeholder.left">
+                    <input type="text" id="downKey" placeholder="Bas (S)" data-i18n-placeholder="placeholder.down">
+                    <input type="text" id="rightKey" placeholder="Droite (D)" data-i18n-placeholder="placeholder.right">
+                </div>
+                <div class="grid-2" style="margin-top:10px;">
+                    <button class="btn btn-primary" id="saveZqsdKeys" data-i18n-key="btn.apply">Appliquer</button>
+                    <button class="btn" id="deactivateZqsd" data-i18n-key="btn.disable">Désactiver</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-computer-mouse"></i> Triple Clic Rapide</span></div>
+                <div class="control-row">
+                    <div><div class="control-label">Activer le Triple Clic</div><div class="control-desc">Active 3 boosts rapidement</div></div>
+                    <label class="switch"><input type="checkbox" id="tripleClickToggle"><span class="slider"></span></label>
+                </div>
+                <div style="margin-top:10px;">
+                    <div class="control-desc" style="margin-bottom:5px;">Touche d'activation :</div>
+                    <input type="text" id="tripleClickInput" placeholder="Cliquez ici et pressez une touche..." readonly style="cursor:pointer; text-align:center; font-weight:bold; color:var(--accent);">
+                </div>
+                <div class="tip-box" style="margin-top:12px;">
+                    💡 Place ta souris sur le jeu et appuie sur la touche pour activer les 3 boosts !
+                </div>
+            </div>
+        </div>
+
+        <!-- APPEARANCE -->
+        <div id="appearance" class="view-section">
+            <div class="section-header">
+                <div><div class="section-title" data-i18n-key="section.appearance.title">Apparence</div><div class="section-subtitle" data-i18n-key="section.appearance.subtitle">Personnalisez votre interface</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-border-all"></i> <span data-i18n-key="card.overlay">Overlay Touches</span></span></div>
+                <div class="hotkey-container" style="margin-bottom:12px;">
+                    <button class="key-btn key-layout-btn active" data-layout="arrows">Arrows</button>
+                    <button class="key-btn key-layout-btn" data-layout="wasd">WASD</button>
+                    <button class="key-btn key-layout-btn" data-layout="zqsd">ZQSD</button>
+                </div>
+                <div class="grid-3">
+                    <button class="btn btn-mini key-theme-btn" data-theme="default">Default</button>
+                    <button class="btn btn-mini key-theme-btn" data-theme="minimal">Minimal</button>
+                    <button class="btn btn-mini key-theme-btn" data-theme="block">Block</button>
+                    <button class="btn btn-mini key-theme-btn" data-theme="classic">Classic</button>
+                    <button class="btn btn-mini key-theme-btn" data-theme="retro">Retro</button>
+                    <button class="btn btn-mini key-theme-btn" data-theme="block-white">White</button>
+                </div>
+            </div>
+
+            <div class="section-header" style="margin-top:4px;">
+                <div><div class="section-title" style="font-size:16px;">Images de Fond</div><div class="section-subtitle">Une image unique par outil</div></div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Timer BG</span></div>
+                    <div class="upload-row">
+                        <div id="preview-timer" class="preview-box"></div>
+                        <button class="btn btn-mini upload-btn" id="btn-upload-timer">Choisir</button>
+                        <button class="btn btn-mini btn-danger" id="btn-reset-timer" style="width:30px;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <input type="file" id="file-timer" accept="image/*" hidden>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">FPS BG</span></div>
+                    <div class="upload-row">
+                        <div id="preview-fps" class="preview-box"></div>
+                        <button class="btn btn-mini upload-btn" id="btn-upload-fps">Choisir</button>
+                        <button class="btn btn-mini btn-danger" id="btn-reset-fps" style="width:30px;"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <input type="file" id="file-fps" accept="image/*" hidden>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title">Keys BG</span></div>
+                <div class="upload-row">
+                    <div id="preview-keys" class="preview-box"></div>
+                    <button class="btn btn-mini upload-btn" id="btn-upload-keys">Image Globale</button>
+                    <button class="btn btn-mini upload-btn" id="btn-upload-keys-active">Image Active</button>
+                    <button class="btn btn-mini btn-danger" id="btn-reset-keys" style="width:30px;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="file" id="file-keys" accept="image/*" hidden>
+                <input type="file" id="file-keys-active" accept="image/*" hidden>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-palette"></i> <span data-i18n-key="card.timerColors">Couleurs du Timer</span></span></div>
+                <div class="grid-3">
+                    <div><div class="control-desc" data-i18n-key="desc.colorRunning">En cours</div><input type="color" id="color-running" class="color-picker" style="height:34px; padding:0; background:none; border:1px solid var(--border); border-radius:6px; width:100%; cursor:pointer;"></div>
+                    <div><div class="control-desc" data-i18n-key="desc.colorPaused">Pause</div><input type="color" id="color-paused" class="color-picker" style="height:34px; padding:0; background:none; border:1px solid var(--border); border-radius:6px; width:100%; cursor:pointer;"></div>
+                    <div><div class="control-desc" data-i18n-key="desc.colorStopped">Arrêt</div><input type="color" id="color-stopped" class="color-picker" style="height:34px; padding:0; background:none; border:1px solid var(--border); border-radius:6px; width:100%; cursor:pointer;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADVANCED -->
+        <div id="advanced" class="view-section">
+            <div class="section-header">
+                <div><div class="section-title">Customisation Totale</div><div class="section-subtitle">Arrondis, couleurs et styles des overlays</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-stopwatch"></i> Timer</span></div>
+                <div class="grid-2">
+                    <div><div class="control-desc">Fond</div><input type="color" id="timer-bg-color" value="#000000" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Texte</div><input type="color" id="timer-text-color" value="#ffffff" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                </div>
+                <div class="style-label"><span>Arrondi</span><span id="val-timer-radius">0px</span></div>
+                <input type="range" class="style-slider" id="timer-radius" min="0" max="30" value="0">
+                <div class="style-label"><span>Opacité</span><span id="val-timer-opacity">100%</span></div>
+                <input type="range" class="style-slider" id="timer-opacity" min="0" max="100" value="100">
+                <div class="style-label"><span>Taille police</span><span id="val-timer-font">100%</span></div>
+                <input type="range" class="style-slider" id="timer-font-scale" min="50" max="200" value="100">
+                <div class="style-label"><span>Épaisseur bordure</span><span id="val-timer-border">0px</span></div>
+                <input type="range" class="style-slider" id="timer-border-width" min="0" max="10" value="0">
+                <div class="grid-2" style="margin-top:10px;">
+                    <div><div class="control-desc">Couleur bordure</div><input type="color" id="timer-border-color" value="#d946ef" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Police</div>
+                        <select id="timer-font-family">
+                            <option value="'Calibri', 'Segoe UI', sans-serif">Standard</option>
+                            <option value="'Courier New', monospace">Retro / Code</option>
+                            <option value="'Arial Black', sans-serif">Bold</option>
+                            <option value="'Georgia', serif">Serif</option>
+                            <option value="'Impact', sans-serif">Impact</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="style-label"><span>Ombre portée</span><span id="val-timer-shadow">0px</span></div>
+                <input type="range" class="style-slider" id="timer-shadow" min="0" max="30" value="0">
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-gauge-high"></i> FPS Counter</span></div>
+                <div class="grid-2">
+                    <div><div class="control-desc">Fond</div><input type="color" id="fps-bg-color" value="#000000" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Texte</div><input type="color" id="fps-text-color" value="#ffffff" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                </div>
+                <div class="style-label"><span>Arrondi</span><span id="val-fps-radius">4px</span></div>
+                <input type="range" class="style-slider" id="fps-radius" min="0" max="30" value="4">
+                <div class="style-label"><span>Opacité</span><span id="val-fps-opacity">100%</span></div>
+                <input type="range" class="style-slider" id="fps-opacity" min="0" max="100" value="100">
+                <div class="style-label"><span>Taille police</span><span id="val-fps-font">100%</span></div>
+                <input type="range" class="style-slider" id="fps-font-scale" min="50" max="200" value="100">
+                <div class="style-label"><span>Épaisseur bordure</span><span id="val-fps-border">0px</span></div>
+                <input type="range" class="style-slider" id="fps-border-width" min="0" max="10" value="0">
+                <div class="grid-2" style="margin-top:10px;">
+                    <div><div class="control-desc">Couleur bordure</div><input type="color" id="fps-border-color" value="#10b981" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Police</div>
+                        <select id="fps-font-family">
+                            <option value="'Segoe UI', sans-serif">Standard</option>
+                            <option value="'Courier New', monospace">Retro / Code</option>
+                            <option value="'Arial Black', sans-serif">Bold</option>
+                            <option value="'Georgia', serif">Serif</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="style-label"><span>Ombre portée</span><span id="val-fps-shadow">0px</span></div>
+                <input type="range" class="style-slider" id="fps-shadow" min="0" max="30" value="0">
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-keyboard"></i> Affichage Touches</span></div>
+                <div class="grid-2">
+                    <div><div class="control-desc">Fond touches</div><input type="color" id="keys-bg-color" value="#000000" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Texte</div><input type="color" id="keys-text-color" value="#ffffff" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                </div>
+                <div class="grid-2" style="margin-top:10px;">
+                    <div><div class="control-desc">Fond touche active</div><input type="color" id="keys-active-bg-color" value="#4bc277" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Texte actif</div><input type="color" id="keys-active-text-color" value="#ffffff" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                </div>
+                <div class="grid-2" style="margin-top:10px;">
+                    <div><div class="control-desc">Bordure active</div><input type="color" id="keys-active-color" value="#4bc277" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                    <div><div class="control-desc">Bordure</div><input type="color" id="keys-border-color" value="#3d3d3d" style="width:100%; height:30px; border:1px solid var(--border); border-radius:6px; padding:2px; cursor:pointer;"></div>
+                </div>
+                <div class="style-label"><span>Arrondi</span><span id="val-keys-radius">12px</span></div>
+                <input type="range" class="style-slider" id="keys-radius" min="0" max="30" value="12">
+                <div class="style-label"><span>Opacité</span><span id="val-keys-opacity">100%</span></div>
+                <input type="range" class="style-slider" id="keys-opacity" min="0" max="100" value="100">
+                <div class="style-label"><span>Taille des touches</span><span id="val-keys-size">100%</span></div>
+                <input type="range" class="style-slider" id="keys-size-scale" min="60" max="160" value="100">
+                <div class="style-label"><span>Épaisseur bordure</span><span id="val-keys-border">2px</span></div>
+                <input type="range" class="style-slider" id="keys-border-width" min="0" max="10" value="2">
+                <div class="style-label"><span>Ombre portée</span><span id="val-keys-shadow">6px</span></div>
+                <input type="range" class="style-slider" id="keys-shadow" min="0" max="30" value="6">
+                <div class="style-label"><span>Espacement touches</span><span id="val-keys-gap">10px</span></div>
+                <input type="range" class="style-slider" id="keys-gap" min="0" max="30" value="10">
+            </div>
+
+            <button class="btn btn-danger" id="resetAllCustom" style="width:100%; margin-top:4px;">
+                <i class="fa-solid fa-rotate-left"></i> Réinitialiser toute la customisation
+            </button>
+        </div>
+
+        <!-- MEDIA -->
+        <div id="media" class="view-section">
+            <div class="section-header">
+                <div><div class="section-title" data-i18n-key="section.media.title">Média</div><div class="section-subtitle" data-i18n-key="section.media.subtitle">Audio et musique</div></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-solid fa-volume-high"></i> <span data-i18n-key="card.volume">Volume Global du Jeu</span></span></div>
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <i class="fa-solid fa-volume-low" style="color:var(--text-muted); font-size:13px;"></i>
+                    <input type="range" id="volumeSlider" class="style-slider" min="0" max="100" style="flex:1; margin:0;">
+                    <span id="volumeValue" style="font-weight:700; width:42px; text-align:right; color:var(--accent); font-size:13px;">100%</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title"><i class="fa-brands fa-soundcloud"></i> <span data-i18n-key="card.soundcloud">Lecteur SoundCloud</span></span></div>
+                <input type="text" id="soundcloudUrl" placeholder="URL de la Playlist..." style="margin-bottom:12px;" data-i18n-placeholder="placeholder.playlist">
+                <button class="btn btn-primary" id="loadSoundcloudPlaylist"><i class="fa-solid fa-play"></i> <span data-i18n-key="btn.launchPlayer">Lancer le Player</span></button>
+                <div id="music-embed-container" style="margin-top:8px; font-size:11.5px; color:var(--text-muted); text-align:center;" data-i18n-key="desc.soundcloud">Ouvre une fenêtre pop-up dédiée.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="status" class="status-toast"><span data-i18n-key="status.done">Action effectuée</span></div>
+
+    <button id="toggleTimer" style="display:none;"></button>
+    <button id="toggleFps" style="display:none;"></button>
+    <button id="toggleKeypress" style="display:none;"></button>
+
+    <script src="popup.js"></script>
+</body>
+</html>

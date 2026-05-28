@@ -1,0 +1,57 @@
+{
+  "manifest_version": 3,
+  "name": "Astrxl extension",
+  "version": "1",
+  "description": "Astrxl extension",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://ss.randomkzn.com/*",
+    "https://yell0wsuit.page/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Astrxl extension",
+    "default_popup": "popup.html",
+    "default_icon": {
+
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://ss.randomkzn.com/*",
+        "https://yell0wsuit.page/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "volumeInjected.js"
+      ],
+      "matches": [
+        "https://ss.randomkzn.com/*",
+        "https://yell0wsuit.page/*"
+      ]
+    }
+  ],
+  "icons": {
+    "48": "icon.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}
